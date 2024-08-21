@@ -140,15 +140,14 @@ const EnrollPartyForm = () => {
         },
         body: JSON.stringify({
           partyName: partyName.toLowerCase(),
-          partyLeader: partyLeader.toLowerCase(), // Convert leader name to lowercase
-          partySymbol: partySymbol.toLowerCase(), // Convert party symbol to lowercase
+          partyLeader: partyLeader.toLowerCase(), 
+          partySymbol: partySymbol.toLowerCase(), 
         }),
       });
 
       if (response.ok) {
         const data = await response.json();
-        console.log(data.message); // Log success message
-        // Reset form fields or perform any other action upon successful enrollment
+        console.log(data.message); 
         setErrorMessage('');
         setPartyName('');
         setPartyLeader('');

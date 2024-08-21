@@ -150,7 +150,7 @@ app = Flask(__name__)
 CORS(app)
 
 # MongoDB configuration
-app.config['MONGO_URI'] = 'mongodb://localhost:27017/voting_system'
+app.config['MONGO_URI'] = 'mongodb+srv://Bharath_Narayanan:bharath22@cluster0.16bef1g.mongodb.net/voting_system'
 mongo = PyMongo(app)
 
 # Load Haar Cascade for face detection
@@ -313,9 +313,14 @@ def recognize_face():
                 return jsonify({"name": recognized_name, "message": "Already voted", "confidence": confidence}), 200
             else:
                 mobile_number = user.get('mobile_number')
-                otp = generate_otp()
-                otp_storage[mobile_number] = otp
-                send_otp(mobile_number, otp)
+                # otp = generate_otp()
+                # otp_storage[mobile_number] = otp
+                # send_otp(mobile_number, otp)
+
+                mongo.db.faces.update_one(
+                    {"label": recognized_name},
+                    {"$set": {"hasVoted": True}}
+                )
 
                 return jsonify({
                     "name": recognized_name,

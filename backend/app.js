@@ -12,7 +12,7 @@ app.use(express.json());
 app.use(fileUpload());
 
 // Connect to MongoDB
-mongoose.connect('mongodb://localhost:27017/voting_system', {
+mongoose.connect('mongodb+srv://Bharath_Narayanan:bharath22@cluster0.16bef1g.mongodb.net/voting_system', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 }).then(() => {

@@ -94,3 +94,60 @@
   width: 100px; /* Adjust spinner size as needed */
   height: 100px; /* Adjust spinner size as needed */
 }
+
+
+.otpPopupOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.otpPopup {
+  background-color: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  max-width: 600px;
+  text-align: center;
+}
+
+.otpHeading {
+  margin-bottom: 10px;
+  font-size: 1.5rem;
+}
+
+.otpPrompt {
+  margin-bottom: 20px;
+  font-size: 1rem;
+  color: #333;
+}
+
+.otpInput {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid #cccccc;
+}
+
+.otpButton {
+  padding: 10px 20px;
+  background-color: #FF8C00; 
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.otpButton:hover {
+  background-color: #138808;
+}

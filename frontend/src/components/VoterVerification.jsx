@@ -136,7 +136,7 @@ const VoterVerification = () => {
       const response = await axios.post('http://127.0.0.1:5000/verify-otp', { mobile: mobileNumber, otp });
       console.log('OTP verification response:', response.data); 
       if (response.data.success) {
-        navigate('/voter'); // Navigate to the voter page
+        navigate('/voter');
       } else {
         setResult('Incorrect OTP. Please try again.');
       }
@@ -185,18 +185,22 @@ const VoterVerification = () => {
         <p className={styles.result}>{result}</p>
 
         {showOtpPopup && (
-          <div className={styles.otpPopup}>
-            <h2>Enter OTP</h2>
-            <form onSubmit={handleOtpSubmit}>
-              <input
-                type="text"
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-                placeholder="Enter OTP"
-                required
-              />
-              <button type="submit">Submit</button>
-            </form>
+          <div className={styles.otpPopupOverlay}>
+            <div className={styles.otpPopup}>
+              <h2 className={styles.otpHeading}>Enter OTP</h2>
+              <p className={styles.otpPrompt}>Enter the OTP sent to your mobile number {mobileNumber}</p>
+              <form onSubmit={handleOtpSubmit}>
+                <input
+                  type="text"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  placeholder="Enter OTP"
+                  className={styles.otpInput}
+                  required
+                />
+                <button type="submit" className={styles.otpButton}>Submit</button>
+              </form>
+            </div>
           </div>
         )}
       </div>
@@ -205,3 +209,4 @@ const VoterVerification = () => {
 };
 
 export default VoterVerification;
+
