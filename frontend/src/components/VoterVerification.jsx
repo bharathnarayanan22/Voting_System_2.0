@@ -104,31 +104,35 @@ const VoterVerification = () => {
   const verifyUser = async () => {
     const imageSrc = webcamRef.current.getScreenshot();
     if (imageSrc) {
-      setLoading(true);
-      try {
-        const response = await axios.post('http://127.0.0.1:5000/recognize', {
-          image: imageSrc.split(',')[1],
-        });
-        console.log(response.data);
+        setLoading(true);
+        try {
+            const response = await axios.post('http://127.0.0.1:5000/recognize', {
+                image: imageSrc.split(',')[1],
+            });
+            console.log(response.data);
 
-        if (response.data.error) {
-          throw new Error(response.data.error);
+            if (response.data.error) {
+                throw new Error(response.data.error);
+            }
+
+            if (response.data.name) {
+                if (response.data.message === "Already voted") {
+                    setResult("You have already voted. No further actions required.");
+                } else {
+                    setMobileNumber(response.data.mobileNumber);
+                    setShowOtpPopup(true);
+                    setResult('Face recognized. OTP sent to your mobile number.');
+                }
+            }
+        } catch (error) {
+            console.error('Error verifying user:', error);
+            setResult('Error verifying user. Please try again.');
+        } finally {
+            setLoading(false);
         }
-
-        if (response.data.name) {
-          setMobileNumber(response.data.mobileNumber);
-          setShowOtpPopup(true);
-          setResult('Face recognized. OTP sent to your mobile number.');
-        }
-
-      } catch (error) {
-        console.error('Error verifying user:', error);
-        setResult('Error verifying user. Please try again.');
-      } finally {
-        setLoading(false);
-      }
     }
-  };
+};
+
 
   const verifyOtp = async () => {
     console.log(`Verifying OTP: ${otp} for mobile: ${mobileNumber}`); 

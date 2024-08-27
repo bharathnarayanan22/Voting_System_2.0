@@ -31,7 +31,7 @@ import p1 from "../assets/pngegg (7).png";
 import p2 from "../assets/pngegg (6).png";
 import p3 from "../assets/pngegg (9).png";
 import p4 from "../assets/pngegg (4).png";
-import chakra from "../assets/chakra.png"; // Ensure the path is correct
+import chakra from "../assets/chakra.png"; 
 
 const drawerWidth = 240;
 
@@ -75,7 +75,6 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
   ...theme.mixins.toolbar,
   justifyContent: "flex-end",
 }));
@@ -115,7 +114,6 @@ export default function OrganizerDashboard() {
 
   const handleMenuItemClick = (view) => {
     setSelectedView(view);
-    setOpen(false); // Close the drawer when an item is clicked
   };
 
   const handleCardClick = (view) => {
@@ -191,44 +189,49 @@ export default function OrganizerDashboard() {
                 onClick={() => handleMenuItemClick("enrollVoter")}
                 sx={{
                   "&:hover": { backgroundColor: "#138808", color: "white" },
+                  gap: "15%"
                 }}
               >
-                <StyledListItemIcon>
+                {/* <StyledListItemIcon> */}
                   <PersonAddIcon />
-                </StyledListItemIcon>
+                {/* </StyledListItemIcon> */}
                 <ListItemText primary="Enroll Voter" />
               </ListItemButton>
               <ListItemButton
                 onClick={() => handleMenuItemClick("enrollParty")}
                 sx={{
                   "&:hover": { backgroundColor: "#138808", color: "white" },
+                  gap: "15%"
                 }}
               >
-                <StyledListItemIcon>
+                {/* <StyledListItemIcon> */}
                   <GroupAddIcon />
-                </StyledListItemIcon>
+                {/* </StyledListItemIcon> */}
                 <ListItemText primary="Enroll Party" />
               </ListItemButton>
               <ListItemButton
                 onClick={() => handleMenuItemClick("viewVoters")}
                 sx={{
                   "&:hover": { backgroundColor: "#138808", color: "white" },
+                  gap: "15%"
                 }}
               >
-                <StyledListItemIcon>
+                {/* <StyledListItemIcon> */}
                   <PeopleAltIcon />
-                </StyledListItemIcon>
+                {/* </StyledListItemIcon> */}
                 <ListItemText primary="View Voters" />
               </ListItemButton>
               <ListItemButton
                 onClick={() => handleMenuItemClick("viewParties")}
                 sx={{
                   "&:hover": { backgroundColor: "#138808", color: "white" },
+                  gap: "15%"
                 }}
+
               >
-                <StyledListItemIcon>
+                {/* <StyledListItemIcon> */}
                   <FormatListBulletedIcon />
-                </StyledListItemIcon>
+                {/* </StyledListItemIcon> */}
                 <ListItemText primary="View Parties" />
               </ListItemButton>
             </StyledList>
@@ -237,11 +240,11 @@ export default function OrganizerDashboard() {
             <Divider />
             <ListItemButton
               onClick={handleHomeClick}
-              sx={{ "&:hover": { backgroundColor: "#138808", color: "white" } }}
+              sx={{ "&:hover": { backgroundColor: "#138808", color: "white" }, gap: "15%" }}
             >
-              <StyledListItemIcon>
+              
                 <ExitToAppIcon />
-              </StyledListItemIcon>
+
               <ListItemText primary="Back to Home" />
             </ListItemButton>
           </Box>

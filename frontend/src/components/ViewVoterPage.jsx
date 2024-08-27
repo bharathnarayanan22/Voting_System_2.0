@@ -24,6 +24,7 @@ const ViewVoterPage = () => {
       const response = await fetch('http://localhost:3000/voters');
       if (response.ok) {
         const data = await response.json();
+        console.log(data.voters)
         setVoters(data.voters);
       } else {
         console.error('Failed to fetch voters:', response.statusText);
@@ -62,6 +63,7 @@ const ViewVoterPage = () => {
           <TableHead>
             <TableRow style={{ backgroundColor: '#138808' }}>
               <TableCell style={{ color: '#FFFFFF', fontWeight: 'bold' }}>Voter</TableCell>
+              <TableCell align = 'center' style={{ color: '#FFFFFF', fontWeight: 'bold' }}>Mobile Number</TableCell>
               <TableCell align='right' style={{ color: '#FFFFFF', fontWeight: 'bold' }}>Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -90,6 +92,9 @@ const ViewVoterPage = () => {
                 <TableRow key={voter._id}>
                   <TableCell component="th" scope="row">
                     {voter.label}
+                  </TableCell>
+                  <TableCell component="th" scope="row" align = 'center'>
+                    {voter.mobile_number}
                   </TableCell>
                   <TableCell align="right">
                     <IconButton onClick={() => handleDeleteVoter(voter._id)} style={{ color: '#FF9933' }} 

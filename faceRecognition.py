@@ -313,9 +313,9 @@ def recognize_face():
                 return jsonify({"name": recognized_name, "message": "Already voted", "confidence": confidence}), 200
             else:
                 mobile_number = user.get('mobile_number')
-                # otp = generate_otp()
-                # otp_storage[mobile_number] = otp
-                # send_otp(mobile_number, otp)
+                otp = generate_otp()
+                otp_storage[mobile_number] = otp
+                send_otp(mobile_number, otp)
 
                 mongo.db.faces.update_one(
                     {"label": recognized_name},
