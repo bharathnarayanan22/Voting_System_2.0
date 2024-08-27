@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Typography, IconButton, Table, TableHead, TableBody, TableRow, TableCell, Skeleton, Box, TableContainer, Paper, TextField, Button } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import EditPartyForm from './EditPartyForm';
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -12,40 +11,14 @@ const ViewPartyPage = () => {
   const [parties, setParties] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [editParty, setEditParty] = useState(null);
-  const [loading, setLoading] = useState(true); // Add a loading state
-  // const [partyName, setPartyName] = useState(partyName);
-  // const [partyLeader, setPartyLeader] = useState(partyLeader);
-  // const [partySymbol, setPartySymbol] = useState(partySymbol);
+  const [partyName, setPartyName] = useState('');
+  const [partyLeader, setPartyLeader] = useState('');
+  const [partySymbol, setPartySymbol] = useState('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchParties();
   }, []);
-
-  const handleUpdateParty = async () => {
-    try {
-      const response = await fetch(`http://localhost:3000/${party._id}`, editParty, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        // body: JSON.stringify({
-        //   partyName,
-        //   partyLeader,
-        //   partySymbol,
-        // }),
-      });
-
-      if (response.ok) {
-        const updatedParty = await response.json();
-        onUpdate(updatedParty);
-        console.log('Party updated successfully');
-      } else {
-        console.error('Failed to update party:', response.statusText);
-      }
-    } catch (error) {
-      console.error('Error updating party:', error);
-    }
-  };
 
   const fetchParties = async () => {
     try {
@@ -59,13 +32,39 @@ const ViewPartyPage = () => {
     } catch (error) {
       console.error('Error fetching parties:', error);
     } finally {
-      setLoading(false); // Set loading to false once the data is fetched
+      setLoading(false);
     }
   };
 
   const handleEditParty = (party) => {
     setIsEditing(true);
     setEditParty(party);
+    setPartyName(party.partyName);
+    setPartyLeader(party.partyLeader);
+    setPartySymbol(party.partySymbol);
+  };
+
+  const handleUpdateParty = async () => {
+    try {
+      const response = await fetch(`http://localhost:3000/${editParty._id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ editParty: { partyName, partyLeader, partySymbol } }),
+      });
+
+      if (response.ok) {
+        const updatedParty = await response.json();
+        setParties(parties.map(party => party._id === updatedParty.party._id ? updatedParty.party : party));
+        console.log('Party updated successfully');
+        handleDialogClose(); // Close the dialog after updating
+      } else {
+        console.error('Failed to update party:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error updating party:', error);
+    }
   };
 
   const handleDeleteParty = async (partyId) => {
@@ -84,14 +83,12 @@ const ViewPartyPage = () => {
     }
   };
 
-  // const handleUpdateParty = (updatedParty) => {
-  //   setParties(parties.map(party => party._id === updatedParty._id ? updatedParty : party));
-  //   setEditingParty(null); // Close the edit form
-  // };
-
   const handleDialogClose = () => {
     setIsEditing(false);
     setEditParty(null);
+    setPartyName('');
+    setPartyLeader('');
+    setPartySymbol('');
   };
 
   return (
@@ -111,7 +108,6 @@ const ViewPartyPage = () => {
           </TableHead>
           <TableBody>
             {loading ? (
-              // Display Skeletons while loading
               <>
                 <TableRow>
                   <TableCell colSpan={4}>
@@ -134,7 +130,7 @@ const ViewPartyPage = () => {
                 <TableRow key={party._id}>
                   <TableCell>{party.partyName}</TableCell>
                   <TableCell>{party.partyLeader}</TableCell>
-                  <TableCell sx={{ fontSize: "" }}>{party.partySymbol}</TableCell>
+                  <TableCell>{party.partySymbol}</TableCell>
                   <TableCell >
                     <IconButton onClick={() => handleEditParty(party)} style={{ color: '#FF9933' }}
                       sx={{ '&:hover': { color: 'blue' } }}><EditIcon /></IconButton>
@@ -147,59 +143,36 @@ const ViewPartyPage = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      {/* {editingParty && <EditPartyForm party={editingParty} onUpdate={handleUpdateParty} />} */}
 
       <Dialog open={isEditing} onClose={handleDialogClose} fullWidth maxWidth="sm">
         <DialogTitle>Edit Party</DialogTitle>
         <DialogContent>
-          {/* <TextField
-            fullWidth
-            margin="normal"
-            label="Resource Type"
-            value={editResource?.type || ''}
-            onChange={(e) => setEditResource({ ...editResource, type: e.target.value })}
-          />
-          <TextField
-            fullWidth
-            margin="normal"
-            label="Quantity"
-            type="number"
-            value={editResource?.quantity || ''}
-            onChange={(e) => setEditResource({ ...editResource, quantity: e.target.value })}
-          />
-          <TextField
-            fullWidth
-            margin="normal"
-            label="Location"
-            value={editResource?.location || ''}
-            onChange={(e) => setEditResource({ ...editResource, location: e.target.value })}
-          /> */}
           <TextField
             label="Party Name"
             variant="outlined"
             fullWidth
-            value={editParty?.partyName || ''}
+            value={partyName}
             onChange={(e) => setPartyName(e.target.value)}
             margin="normal"
-            required={true}
+            required
           />
           <TextField
             label="Party Leader"
             variant="outlined"
             fullWidth
-            value={editParty?.partyLeader || ''}
+            value={partyLeader}
             onChange={(e) => setPartyLeader(e.target.value)}
             margin="normal"
-            required={true}
+            required
           />
           <TextField
             label="Party Symbol"
             variant="outlined"
             fullWidth
-            value={editParty?.partySymbol || ''}
+            value={partySymbol}
             onChange={(e) => setPartySymbol(e.target.value)}
             margin="normal"
-            required={true}
+            required
           />
         </DialogContent>
         <DialogActions>
@@ -211,8 +184,6 @@ const ViewPartyPage = () => {
           </Button>
         </DialogActions>
       </Dialog>
-
-
     </Box>
   );
 };

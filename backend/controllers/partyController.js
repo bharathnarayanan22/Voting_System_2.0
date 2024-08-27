@@ -46,7 +46,8 @@ const enrollParty = async(req, res)=> {
 
 const updateParty = async(req, res) => {
   const { id } = req.params;
-  const { partyName, partyLeader, partySymbol } = req.body;
+  const { editParty } = req.body;
+  const { partyName, partyLeader, partySymbol } = editParty;
 
   try {
     // Check if the new party name, leader, or symbol already exists (case-insensitive)
@@ -68,8 +69,7 @@ const updateParty = async(req, res) => {
       partyName,
       partyLeader,
       partySymbol
-    }, { new: true }); // Set { new: true } to return the updated party document
-
+    }, { new: true }); 
     if (updatedParty) {
       res.status(200).json({ message: "Party updated successfully", party: updatedParty });
     } else {
