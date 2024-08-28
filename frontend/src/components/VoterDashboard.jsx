@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Typography, Table, TableHead, TableBody, TableRow, TableCell, Button, Box } from '@mui/material';
-import img from '../assets/government.png'; 
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import img from '../assets/government.png';
+
 const ViewVoterPage = () => {
   const [parties, setParties] = useState([]);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [votedParty, setVotedParty] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -24,7 +28,7 @@ const ViewVoterPage = () => {
     }
   };
 
-  const handleVote = async (partyId) => {
+  const handleVote = async (partyId, partyName) => {
     try {
       const response = await fetch(`http://localhost:3000/voters/vote/${partyId}`, {
         method: 'POST',
@@ -33,14 +37,19 @@ const ViewVoterPage = () => {
         const updatedParty = await response.json();
         console.log('Voted successfully', updatedParty);
 
-        // Update state with the new vote count
         setParties((prevParties) =>
           prevParties.map((party) =>
             party._id === partyId ? { ...party, VoteCount: updatedParty.VoteCount } : party
           )
         );
 
-        navigate('/voterVerification');
+        setVotedParty(partyName);
+        setShowConfirmation(true);
+
+        setTimeout(() => {
+          setShowConfirmation(false);
+          navigate('/voterVerification');
+        }, 5000);
       } else {
         console.error('Failed to vote:', response.statusText);
       }
@@ -55,7 +64,6 @@ const ViewVoterPage = () => {
       minHeight: '100vh',
       display: 'flex',
       flexDirection: 'column',
-      // alignItems: 'center',
       justifyContent: 'center',
       padding: 2,
       backgroundImage: `linear-gradient(to bottom, #ff9933, #ffffff, #138808)`,
@@ -69,14 +77,14 @@ const ViewVoterPage = () => {
         left: 0,
         width: '100%',
         height: '80%',
-        backgroundImage: `url(${img})`, // Replace with your image path
+        backgroundImage: `url(${img})`,
         backgroundSize: 'contain',
         backgroundRepeat: 'no-repeat',
         backgroundPosition: 'center',
-        opacity: 0.2, // Adjust opacity as needed
+        opacity: 0.2,
         zIndex: 1,
       }} />
-      <Box sx={{ position: 'relative', zIndex: 2, backgroundColor: 'rgba(255, 255, 255, 0.5)', borderRadius: 5, padding: 3, maxWidth: '80%', marginLeft: '9%', marginRight: '9%'}}>
+      <Box sx={{ position: 'relative', zIndex: 2, backgroundColor: 'rgba(255, 255, 255, 0.5)', borderRadius: 5, padding: 3, maxWidth: '80%', marginLeft: '9%', marginRight: '9%' }}>
         <Typography variant="h4" gutterBottom style={{ color: '#000080', fontWeight: 'bold', textAlign: 'center' }}>
           Vote for Your Preferred Party
         </Typography>
@@ -103,7 +111,7 @@ const ViewVoterPage = () => {
                         backgroundColor: '#138808',
                       },
                     }}
-                    onClick={() => handleVote(party._id)}
+                    onClick={() => handleVote(party._id, party.partyName)}
                   >
                     Vote
                   </Button>
@@ -113,6 +121,28 @@ const ViewVoterPage = () => {
           </TableBody>
         </Table>
       </Box>
+      
+      {showConfirmation && (
+        <Box sx={{
+          position: 'fixed',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          backgroundColor: 'rgba(0, 128, 0, 0.8)',
+          color: '#FFFFFF',
+          borderRadius: 5,
+          padding: 3,
+          display: 'flex',
+          alignItems: 'center',
+          flexDirection: 'column',
+          zIndex: 3,
+        }}>
+          <CheckCircleIcon sx={{ fontSize: 50, marginBottom: 2 }} />
+          <Typography variant="h5" gutterBottom>
+            You have voted for {votedParty}!
+          </Typography>
+        </Box>
+      )}
     </Box>
   );
 };
