@@ -60,13 +60,21 @@ def verify_otp(mobile_number, entered_otp):
         print("OTP verification failed!")
         return False
     
+from bson import ObjectId
+
 @app.route('/capture', methods=['POST'])
 def capture_face():
     data = request.get_json()
     name = data['name']
     image_data_list = data['image']
     mobile_number = data['mobile_number']
-    regionId = data['regionId']
+    region_id_str = data['regionId']
+    
+    # Convert regionId to ObjectId
+    try:
+        regionId = ObjectId(region_id_str)
+    except Exception as e:
+        return jsonify({"error": "Invalid regionId format"}), 400
 
     label_dir = os.path.join(dataset_dir, name)
     if not os.path.exists(label_dir):
@@ -74,6 +82,8 @@ def capture_face():
 
     count = len(os.listdir(label_dir))
     image_paths = []
+    upserted_id_set = False  # Variable to track if a new voter was inserted
+
     for image_data in image_data_list:
         nparr = np.frombuffer(base64.b64decode(image_data), np.uint8)
         img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
@@ -87,7 +97,6 @@ def capture_face():
             cv2.imwrite(file_name_path, resized_face)
             image_paths.append(file_name_path)
 
-            # Save voter info and face image paths
             result = mongo.db.faces.update_one(
                 {'label': name},
                 {
@@ -96,18 +105,24 @@ def capture_face():
                 },
                 upsert=True
             )
+
+            # Check if a new document was upserted
+            if result.upserted_id is not None:
+                print(f"New voter inserted: {result.upserted_id}")
+                id = result.upserted_id
+                print(id)
+                upserted_id_set = True
             count += 1
 
-            # If a new voter was inserted, update the region's voter list
-            if result.upserted_id:
-                mongo.db.regions.update_one(
-                    {'_id': regionId},
-                    {'$push': {'voters': result.upserted_id}},
-                    upsert=True
-                )
+    # If a new voter was inserted, update the region's voter list
+    if upserted_id_set:
+        mongo.db.regions.update_one(
+            {'_id': regionId},
+            {'$push': {'voters': id}},
+            upsert=True
+        )
 
     return jsonify({"message": "Images captured and stored successfully"}), 200
-from flask import Flask, request, jsonify
 
 @app.route('/send-otp', methods=['POST'])
 def send_otp_route():
