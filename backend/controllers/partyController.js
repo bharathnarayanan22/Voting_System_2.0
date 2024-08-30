@@ -1,4 +1,5 @@
 const PartyModel = require("../model/partyModel");
+const RegionModel = require("../model/RegionModel");
 
 const getParties = async(req, res) => {
   try {
@@ -11,10 +12,41 @@ const getParties = async(req, res) => {
 }
 
 const enrollParty = async(req, res)=> {
-  try {
-    const { partyName, partyLeader, partySymbol } = req.body;
+  // try {
+  //   const { partyName, partyLeader, partySymbol, regionId } = req.body;
 
-    // Check if the party name, leader, or symbol already exists (case-insensitive)
+  //   // Check if the party name, leader, or symbol already exists (case-insensitive)
+  //   const existingParty = await PartyModel.findOne({
+  //     $or: [
+  //       { partyName: { $regex: new RegExp(`^${partyName}$`, 'i') } },
+  //       { partyLeader: { $regex: new RegExp(`^${partyLeader}$`, 'i') } },
+  //       { partySymbol: { $regex: new RegExp(`^${partySymbol}$`, 'i') } },
+  //     ],
+  //   });
+
+  //   if (existingParty) {
+  //     return res.status(409).json({ message: 'Party already enrolled.' });
+  //   }
+
+  //   // Create a new party enrollment document
+  //   const newParty = new PartyModel({
+  //     partyName,
+  //     partyLeader,
+  //     partySymbol,
+  //     regionId,
+  //   });
+
+  //   // Save the new party enrollment document to the database
+  //   await newParty.save();
+
+  //   res.json({ message: "Party enrolled successfully" });
+  // } catch (error) {
+  //   console.error("Error enrolling party:", error);
+  //   res.status(500).json({ message: "Internal server error" });
+  // }
+  try {
+    const { partyName, partyLeader, partySymbol, regionId } = req.body;
+
     const existingParty = await PartyModel.findOne({
       $or: [
         { partyName: { $regex: new RegExp(`^${partyName}$`, 'i') } },
@@ -27,20 +59,26 @@ const enrollParty = async(req, res)=> {
       return res.status(409).json({ message: 'Party already enrolled.' });
     }
 
-    // Create a new party enrollment document
-    const newParty = new PartyModel({
+    const party = new PartyModel({
       partyName,
       partyLeader,
       partySymbol,
+      regionId
     });
 
-    // Save the new party enrollment document to the database
-    await newParty.save();
+    await party.save();
 
-    res.json({ message: "Party enrolled successfully" });
+    // Find the region by ID and add the party to its 'parties' array
+    const region = await RegionModel.findById(regionId);
+    if (region) {
+      region.parties.push(party._id);
+      await region.save();
+    }
+
+    res.status(201).json({ message: 'Party enrolled successfully!' });
   } catch (error) {
-    console.error("Error enrolling party:", error);
-    res.status(500).json({ message: "Internal server error" });
+    console.error('Error enrolling party:', error);
+    res.status(500).json({ message: 'Failed to enroll party. Please try again.' });
   }
 }
 

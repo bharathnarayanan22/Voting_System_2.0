@@ -19,6 +19,12 @@ const partySchema = new mongoose.Schema({
     type: Number, 
     default: 0 
   },
+  regionId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Region',
+    required: true,
+    unique: false,  
+  }
 });
 
 // Define compound index

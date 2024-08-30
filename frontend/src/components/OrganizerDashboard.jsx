@@ -12,6 +12,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
+import MapIcon from '@mui/icons-material/Map';
 import ListItemText from "@mui/material/ListItemText";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
@@ -21,6 +22,7 @@ import EnrollVoterForm from "./EnrollVoterForm";
 import EnrollPartyForm from "./EnrollPartyForm";
 import ViewPartyPage from "./ViewPartyPage";
 import ViewVoterPage from "./ViewVoterPage";
+import RegionForm from "./RegionForm";
 import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
 import CardContent from "@mui/material/CardContent";
@@ -32,6 +34,7 @@ import p2 from "../assets/pngegg (6).png";
 import p3 from "../assets/pngegg (9).png";
 import p4 from "../assets/pngegg (4).png";
 import chakra from "../assets/chakra.png"; 
+import ViewRegions from "./ViewRegions";
 
 const drawerWidth = 240;
 
@@ -185,6 +188,16 @@ export default function OrganizerDashboard() {
             </DrawerHeader>
             <Divider />
             <StyledList>
+            <ListItemButton
+                onClick={() => handleMenuItemClick("createRegion")}
+                sx={{
+                  "&:hover": { backgroundColor: "#138808", color: "white" },
+                  gap: "15%"
+                }}
+              >
+                <MapIcon />
+                <ListItemText primary="Create Region" />
+              </ListItemButton>
               <ListItemButton
                 onClick={() => handleMenuItemClick("enrollVoter")}
                 sx={{
@@ -208,6 +221,19 @@ export default function OrganizerDashboard() {
                   <GroupAddIcon />
                 {/* </StyledListItemIcon> */}
                 <ListItemText primary="Enroll Party" />
+              </ListItemButton>
+              <ListItemButton
+                onClick={() => handleMenuItemClick("viewRegions")}
+                sx={{
+                  "&:hover": { backgroundColor: "#138808", color: "white" },
+                  gap: "15%"
+                }}
+
+              >
+                {/* <StyledListItemIcon> */}
+                  <FormatListBulletedIcon />
+                {/* </StyledListItemIcon> */}
+                <ListItemText primary="View Regions" />
               </ListItemButton>
               <ListItemButton
                 onClick={() => handleMenuItemClick("viewVoters")}
@@ -400,8 +426,10 @@ export default function OrganizerDashboard() {
               </Card>
             </Box>
           )}
+          {selectedView === "createRegion" && <RegionForm />}
           {selectedView === "enrollVoter" && <EnrollVoterForm />}
           {selectedView === "enrollParty" && <EnrollPartyForm />}
+          {selectedView === "viewRegions" && <ViewRegions />}
           {selectedView === "viewVoters" && <ViewVoterPage />}
           {selectedView === "viewParties" && <ViewPartyPage />}
         </Main>
