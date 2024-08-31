@@ -1,6 +1,11 @@
 const mongoose = require("mongoose");
 
 const faceSchema = new mongoose.Schema({
+  id: {
+    type: String,
+    required: true,
+    unique: true,
+  },
   label: {
     type: String,
     required: true,
@@ -10,7 +15,6 @@ const faceSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
-    // match: /^[0-9]{10}$/, 
   },
   regionId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -24,6 +28,10 @@ const faceSchema = new mongoose.Schema({
   imagePaths: {
     type: [String],
     default: [],
+  },
+  fingerprintData: {
+    type: Object, 
+    required: true,
   },
 });
 

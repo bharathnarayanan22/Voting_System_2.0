@@ -65,12 +65,13 @@ from bson import ObjectId
 @app.route('/capture', methods=['POST'])
 def capture_face():
     data = request.get_json()
+    id = data['id']
     name = data['name']
     image_data_list = data['image']
     mobile_number = data['mobile_number']
     region_id_str = data['regionId']
-    
-    # Convert regionId to ObjectId
+    fingerprintData = data['fingerprintData']
+
     try:
         regionId = ObjectId(region_id_str)
     except Exception as e:
@@ -82,7 +83,7 @@ def capture_face():
 
     count = len(os.listdir(label_dir))
     image_paths = []
-    upserted_id_set = False  # Variable to track if a new voter was inserted
+    upserted_id_set = False  
 
     for image_data in image_data_list:
         nparr = np.frombuffer(base64.b64decode(image_data), np.uint8)
@@ -98,15 +99,19 @@ def capture_face():
             image_paths.append(file_name_path)
 
             result = mongo.db.faces.update_one(
-                {'label': name},
+                {'label': name,},
                 {
-                    '$setOnInsert': {'hasVoted': False, 'mobile_number': mobile_number, 'regionId': regionId},
+                    '$setOnInsert': {
+                        'hasVoted': False, 
+                        'mobile_number': mobile_number, 
+                        'regionId': regionId, 
+                        'fingerprintData': fingerprintData
+                    },
                     '$push': {'imagePaths': file_name_path}
                 },
                 upsert=True
             )
 
-            # Check if a new document was upserted
             if result.upserted_id is not None:
                 print(f"New voter inserted: {result.upserted_id}")
                 id = result.upserted_id
@@ -114,7 +119,6 @@ def capture_face():
                 upserted_id_set = True
             count += 1
 
-    # If a new voter was inserted, update the region's voter list
     if upserted_id_set:
         mongo.db.regions.update_one(
             {'_id': regionId},

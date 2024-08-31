@@ -15,6 +15,7 @@
     "@mui/icons-material": "^5.15.16",
     "@mui/material": "^5.16.7",
     "@mui/styles": "^5.16.7",
+    "@simplewebauthn/browser": "^10.0.0",
     "axios": "^1.7.4",
     "framer-motion": "^11.2.4",
     "prop-types": "^15.8.1",
