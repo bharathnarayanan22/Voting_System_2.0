@@ -102,6 +102,7 @@ def capture_face():
                 {'label': name,},
                 {
                     '$setOnInsert': {
+                        'id': id,
                         'hasVoted': False, 
                         'mobile_number': mobile_number, 
                         'regionId': regionId, 
@@ -205,18 +206,19 @@ def recognize_face():
                 return jsonify({"name": recognized_name, "message": "Already voted", "confidence": confidence}), 200
             else:
                 mobile_number = user.get('mobile_number')
-                otp = generate_otp()
-                otp_storage[mobile_number] = otp
-                send_otp(mobile_number, otp)
+                # otp = generate_otp()
+                # otp_storage[mobile_number] = otp
+                # send_otp(mobile_number, otp)
 
-                mongo.db.faces.update_one(
-                    {"label": recognized_name},
-                    {"$set": {"hasVoted": True}}
-                )
+                # mongo.db.faces.update_one(
+                #     {"label": recognized_name},
+                #     {"$set": {"hasVoted": True}}
+                # )
 
 
                 return jsonify({
                     "name": recognized_name,
+                    "id": user.get('id'),
                     "message": "Verification successful. OTP sent.",
                     "confidence": confidence,
                     "mobileNumber": mobile_number
