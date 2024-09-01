@@ -1,11 +1,7 @@
 const mongoose = require("mongoose");
 
 const faceSchema = new mongoose.Schema({
-  id: {
-    type: String,
-    required: true,
-    unique: true,
-  },
+
   label: {
     type: String,
     required: true,
@@ -29,10 +25,7 @@ const faceSchema = new mongoose.Schema({
     type: [String],
     default: [],
   },
-  fingerprintData: {
-    type: Object, 
-    required: true,
-  },
+  
 });
 
 const Face = mongoose.model("Face", faceSchema);

@@ -65,12 +65,11 @@ from bson import ObjectId
 @app.route('/capture', methods=['POST'])
 def capture_face():
     data = request.get_json()
-    id = data['id']
     name = data['name']
     image_data_list = data['image']
     mobile_number = data['mobile_number']
     region_id_str = data['regionId']
-    fingerprintData = data['fingerprintData']
+    #fingerprintData = data['fingerprintData']
 
     try:
         regionId = ObjectId(region_id_str)
@@ -102,11 +101,10 @@ def capture_face():
                 {'label': name,},
                 {
                     '$setOnInsert': {
-                        'id': id,
                         'hasVoted': False, 
                         'mobile_number': mobile_number, 
                         'regionId': regionId, 
-                        'fingerprintData': fingerprintData
+                        # 'fingerprintData': fingerprintData
                     },
                     '$push': {'imagePaths': file_name_path}
                 },
@@ -206,14 +204,14 @@ def recognize_face():
                 return jsonify({"name": recognized_name, "message": "Already voted", "confidence": confidence}), 200
             else:
                 mobile_number = user.get('mobile_number')
-                # otp = generate_otp()
-                # otp_storage[mobile_number] = otp
-                # send_otp(mobile_number, otp)
+                otp = generate_otp()
+                otp_storage[mobile_number] = otp
+                send_otp(mobile_number, otp)
 
-                # mongo.db.faces.update_one(
-                #     {"label": recognized_name},
-                #     {"$set": {"hasVoted": True}}
-                # )
+                mongo.db.faces.update_one(
+                    {"label": recognized_name},
+                    {"$set": {"hasVoted": True}}
+                )
 
 
                 return jsonify({

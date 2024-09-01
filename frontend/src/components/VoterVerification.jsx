@@ -103,95 +103,95 @@ const VoterVerification = () => {
   const webcamRef = React.useRef(null);
 
 
-  //   const verifyUser = async () => {
-  //     const imageSrc = webcamRef.current.getScreenshot();
-  //     if (imageSrc) {
-  //         setLoading(true);
-  //         try {
-  //             const response = await axios.post('http://127.0.0.1:5000/recognize', {
-  //                 image: imageSrc.split(',')[1],
-  //             });
-  //             console.log(response.data);
+    const verifyUser = async () => {
+      const imageSrc = webcamRef.current.getScreenshot();
+      if (imageSrc) {
+          setLoading(true);
+          try {
+              const response = await axios.post('http://127.0.0.1:5000/recognize', {
+                  image: imageSrc.split(',')[1],
+              });
+              console.log(response.data);
 
-  //             if (response.data.error) {
-  //                 throw new Error(response.data.error);
-  //             }
+              if (response.data.error) {
+                  throw new Error(response.data.error);
+              }
 
-  //             if (response.data.name) {
-  //                 if (response.data.message === "Already voted") {
-  //                     setResult("You have already voted. No further actions required.");
-  //                 } else {
-  //                     setMobileNumber(response.data.mobileNumber);
-  //                     setShowOtpPopup(true);
-  //                     setResult('Face recognized. OTP sent to your mobile number.');
-  //                 }
-  //             }
-  //         } catch (error) {
-  //             console.error('Error verifying user:', error);
-  //             setResult('Error verifying user. Please try again.');
-  //         } finally {
-  //             setLoading(false);
-  //         }
-  //     }
-  // };
-
-  const verifyUser = async () => {
-    const imageSrc = webcamRef.current.getScreenshot();
-    if (imageSrc) {
-      setLoading(true);
-      try {
-        const faceRecognitionResponse = await axios.post('http://127.0.0.1:5000/recognize', {
-          image: imageSrc.split(',')[1],
-        });
-
-        if (faceRecognitionResponse.data.error) {
-          throw new Error(faceRecognitionResponse.data.error);
-        }
-
-        console.log(faceRecognitionResponse.data)
-
-        const userId = faceRecognitionResponse.data.id;
-        console.log(userId)
-
-        if (faceRecognitionResponse.data.name) {
-          if (faceRecognitionResponse.data.message === "Already voted") {
-            setResult("You have already voted. No further actions required.");
-          } else {
-            // Proceed with WebAuthn fingerprint authentication
-            const challengeResponse = await axios.post('http://localhost:3000/loginChallenge', {
-              userId,
-            });
-
-            const { options } = challengeResponse.data;
-
-
-            const authenticationResult = await startAuthentication(options)
-            console.log('Registration result:', authenticationResult);
-
-
-            // Send the authentication result back to the server for verification
-            const verifyResponse = await axios.post('http://localhost:3000/loginVerify', {
-              userId,
-              cred: authenticationResult,
-            });
-
-            if (verifyResponse.status === 200) {
-              setMobileNumber(faceRecognitionResponse.data.mobileNumber);
-              setShowOtpPopup(true);
-              setResult('Face recognized. OTP sent to your mobile number.');
-            } else {
-              throw new Error('WebAuthn verification failed.');
-            }
+              if (response.data.name) {
+                  if (response.data.message === "Already voted") {
+                      setResult("You have already voted. No further actions required.");
+                  } else {
+                      setMobileNumber(response.data.mobileNumber);
+                      setShowOtpPopup(true);
+                      setResult('Face recognized. OTP sent to your mobile number.');
+                  }
+              }
+          } catch (error) {
+              console.error('Error verifying user:', error);
+              setResult('Error verifying user. Please try again.');
+          } finally {
+              setLoading(false);
           }
-        }
-      } catch (error) {
-        console.error('Error verifying user:', error);
-        setResult(`Error verifying user: ${error.message}. Please try again.`);
-      } finally {
-        setLoading(false);
       }
-    }
   };
+
+  // const verifyUser = async () => {
+  //   const imageSrc = webcamRef.current.getScreenshot();
+  //   if (imageSrc) {
+  //     setLoading(true);
+  //     try {
+  //       const faceRecognitionResponse = await axios.post('http://127.0.0.1:5000/recognize', {
+  //         image: imageSrc.split(',')[1],
+  //       });
+
+  //       if (faceRecognitionResponse.data.error) {
+  //         throw new Error(faceRecognitionResponse.data.error);
+  //       }
+
+  //       console.log(faceRecognitionResponse.data)
+
+  //       const userId = faceRecognitionResponse.data.id;
+  //       console.log(userId)
+
+  //       if (faceRecognitionResponse.data.name) {
+  //         if (faceRecognitionResponse.data.message === "Already voted") {
+  //           setResult("You have already voted. No further actions required.");
+  //         } else {
+  //           // Proceed with WebAuthn fingerprint authentication
+  //           const challengeResponse = await axios.post('http://localhost:3000/loginChallenge', {
+  //             userId,
+  //           });
+
+  //           const { options } = challengeResponse.data;
+
+
+  //           const authenticationResult = await startAuthentication(options)
+  //           console.log('Authentication result:', authenticationResult);
+
+
+  //           // Send the authentication result back to the server for verification
+  //           const verifyResponse = await axios.post('http://localhost:3000/loginVerify', {
+  //             userId,
+  //             cred: authenticationResult,
+  //           });
+
+  //           if (verifyResponse.status === 200) {
+  //             setMobileNumber(faceRecognitionResponse.data.mobileNumber);
+  //             setShowOtpPopup(true);
+  //             setResult('Face recognized. OTP sent to your mobile number.');
+  //           } else {
+  //             throw new Error('WebAuthn verification failed.');
+  //           }
+  //         }
+  //       }
+  //     } catch (error) {
+  //       console.error('Error verifying user:', error);
+  //       setResult(`Error verifying user: ${error.message}. Please try again.`);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   }
+  // };
 
   const verifyOtp = async () => {
     console.log(`Verifying OTP: ${otp} for mobile: ${mobileNumber}`);
