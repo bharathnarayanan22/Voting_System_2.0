@@ -7,7 +7,7 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import MenuItem from "@mui/material/MenuItem";
-import Select from 'react-select';
+import Select from "react-select";
 import Webcam from "react-webcam";
 import axios from "axios";
 
@@ -35,18 +35,20 @@ const EnrollVoterForm = () => {
   useEffect(() => {
     const fetchRegions = async () => {
       try {
-        const response = await fetch('http://localhost:3000/regions');
+        const response = await fetch("http://localhost:3000/regions");
         if (response.ok) {
           const data = await response.json();
-          setRegions(data.regions.map(region => ({
-            value: region._id,
-            label: region.name
-          })));
+          setRegions(
+            data.regions.map((region) => ({
+              value: region._id,
+              label: region.name,
+            }))
+          );
         } else {
-          console.error('Failed to fetch regions:', response.statusText);
+          console.error("Failed to fetch regions:", response.statusText);
         }
       } catch (error) {
-        console.error('Error fetching regions:', error);
+        console.error("Error fetching regions:", error);
       }
     };
 
@@ -66,7 +68,7 @@ const EnrollVoterForm = () => {
   const handleEnroll = async () => {
     try {
       setLoading(true);
-      console.log(selectedRegion.value)
+      console.log(selectedRegion.value);
       const response = await axios.post("http://127.0.0.1:5000/capture", {
         name: name,
         mobile_number: mobile_number,
@@ -85,7 +87,16 @@ const EnrollVoterForm = () => {
   return (
     <ThemeProvider theme={theme}>
       <Box>
-        <Typography variant="h4" gutterBottom>
+        <Typography
+          variant="h4"
+          gutterBottom
+          sx={{
+            fontFamily: "Playfair Display",
+            fontStyle: "italic",
+            fontWeight: 900,
+            color: "#121481",
+          }}
+        >
           Enroll Voter
         </Typography>
         <Grid container spacing={2}>
@@ -111,14 +122,14 @@ const EnrollVoterForm = () => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-          <Select
-          options={regions}
-          value={selectedRegion}
-          onChange={setSelectedRegion}
-          placeholder="Select Region"
-          isClearable
-          isSearchable
-        />
+            <Select
+              options={regions}
+              value={selectedRegion}
+              onChange={setSelectedRegion}
+              placeholder="Select Region"
+              isClearable
+              isSearchable
+            />
           </Grid>
         </Grid>
         <Box mt={2}>
@@ -504,8 +515,6 @@ export default EnrollVoterForm;
 
 //       const options = response.data;
 //       console.log("Received WebAuthn options:", options);
-
-      
 
 //       // Start WebAuthn registration process
 //       // const credential = await navigator.credentials.create({

@@ -65,8 +65,8 @@
 }
 
 .video {
-  max-width: 80%;
-  max-height: 80%;
+  max-width: 90%;
+  max-height: 70%;
   border: 5px solid #138808; /* Set video border color to green */
   border-radius: 10px;
 }
@@ -151,3 +151,50 @@
 .otpButton:hover {
   background-color: #138808;
 }
+
+
+.regionLabel {
+  font-size: 1rem;
+  color: #fff; /* White text for visibility */
+  margin-bottom: 8px;
+}
+
+.regionSelect {
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: 2px solid #138808; /* Green border */
+  background-color: #fff; /* White background */
+  color: #333; /* Dark text color */
+  appearance: none;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+
+.regionSelect:hover {
+  border-color: #ff9933; /* Change border color to saffron on hover */
+}
+
+/* Add spacing between label and select */
+.regionLabel {
+  margin-bottom: 10px;
+}
+
+/* Spacing around select element */
+.regionSelect {
+  margin-bottom: 20px;
+}
+
+/* Media query to ensure it looks good on smaller screens */
+@media (max-width: 768px) {
+  .regionSelect {
+    font-size: 0.9rem;
+    padding: 8px;
+  }
+
+  .regionLabel {
+    font-size: 0.9rem;
+  }
+}
+

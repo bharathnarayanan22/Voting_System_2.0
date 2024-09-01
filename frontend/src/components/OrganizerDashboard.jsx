@@ -12,11 +12,13 @@ import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
-import MapIcon from '@mui/icons-material/Map';
+import MapIcon from "@mui/icons-material/Map";
+import AddLocationIcon from "@mui/icons-material/AddLocation";
 import ListItemText from "@mui/material/ListItemText";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
+import GroupsIcon from "@mui/icons-material/Groups";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import EnrollVoterForm from "./EnrollVoterForm";
 import EnrollPartyForm from "./EnrollPartyForm";
@@ -33,7 +35,9 @@ import p1 from "../assets/pngegg (7).png";
 import p2 from "../assets/pngegg (6).png";
 import p3 from "../assets/pngegg (9).png";
 import p4 from "../assets/pngegg (4).png";
-import chakra from "../assets/chakra.png"; 
+import p5 from "../assets/pngegg (12).png";
+import p6 from "../assets/pngegg (2).png";
+import chakra from "../assets/chakra.png";
 import ViewRegions from "./ViewRegions";
 
 const drawerWidth = 240;
@@ -126,7 +130,10 @@ export default function OrganizerDashboard() {
   const handleHomeClick = () => {
     navigate("/home");
   };
-  console.log(chakra);
+  const selectedStyle = {
+    backgroundColor: "#138808",
+    color: "white",
+  };
   return (
     <ThemeProvider theme={theme}>
       <Box
@@ -188,76 +195,70 @@ export default function OrganizerDashboard() {
             </DrawerHeader>
             <Divider />
             <StyledList>
-            <ListItemButton
+              <ListItemButton
                 onClick={() => handleMenuItemClick("createRegion")}
                 sx={{
                   "&:hover": { backgroundColor: "#138808", color: "white" },
-                  gap: "15%"
+                  gap: "15%",
+                  ...(selectedView === "createRegion" && selectedStyle),
                 }}
               >
-                <MapIcon />
+                <AddLocationIcon />
                 <ListItemText primary="Create Region" />
               </ListItemButton>
               <ListItemButton
                 onClick={() => handleMenuItemClick("enrollVoter")}
                 sx={{
                   "&:hover": { backgroundColor: "#138808", color: "white" },
-                  gap: "15%"
+                  gap: "15%",
+                  ...(selectedView === "enrollVoter" && selectedStyle),
                 }}
               >
-                {/* <StyledListItemIcon> */}
-                  <PersonAddIcon />
-                {/* </StyledListItemIcon> */}
+                <PersonAddIcon />
                 <ListItemText primary="Enroll Voter" />
               </ListItemButton>
               <ListItemButton
                 onClick={() => handleMenuItemClick("enrollParty")}
                 sx={{
                   "&:hover": { backgroundColor: "#138808", color: "white" },
-                  gap: "15%"
+                  gap: "15%",
+                  ...(selectedView === "enrollParty" && selectedStyle),
                 }}
               >
-                {/* <StyledListItemIcon> */}
-                  <GroupAddIcon />
-                {/* </StyledListItemIcon> */}
+                <GroupAddIcon />
                 <ListItemText primary="Enroll Party" />
               </ListItemButton>
               <ListItemButton
                 onClick={() => handleMenuItemClick("viewRegions")}
                 sx={{
                   "&:hover": { backgroundColor: "#138808", color: "white" },
-                  gap: "15%"
+                  gap: "15%",
+                  ...(selectedView === "viewRegions" && selectedStyle),
                 }}
-
               >
-                {/* <StyledListItemIcon> */}
-                  <FormatListBulletedIcon />
-                {/* </StyledListItemIcon> */}
+                <MapIcon />
                 <ListItemText primary="View Regions" />
               </ListItemButton>
               <ListItemButton
                 onClick={() => handleMenuItemClick("viewVoters")}
                 sx={{
                   "&:hover": { backgroundColor: "#138808", color: "white" },
-                  gap: "15%"
+                  gap: "15%",
+                  ...(selectedView === "viewVoters" && selectedStyle),
                 }}
               >
-                {/* <StyledListItemIcon> */}
-                  <PeopleAltIcon />
-                {/* </StyledListItemIcon> */}
+                <PeopleAltIcon />
                 <ListItemText primary="View Voters" />
               </ListItemButton>
               <ListItemButton
                 onClick={() => handleMenuItemClick("viewParties")}
                 sx={{
                   "&:hover": { backgroundColor: "#138808", color: "white" },
-                  gap: "15%"
+                  gap: "15%",
+                  ...(selectedView === "viewParties" && selectedStyle),
                 }}
-
               >
-                {/* <StyledListItemIcon> */}
-                  <FormatListBulletedIcon />
-                {/* </StyledListItemIcon> */}
+                <GroupsIcon />
                 <ListItemText primary="View Parties" />
               </ListItemButton>
             </StyledList>
@@ -266,165 +267,331 @@ export default function OrganizerDashboard() {
             <Divider />
             <ListItemButton
               onClick={handleHomeClick}
-              sx={{ "&:hover": { backgroundColor: "#138808", color: "white" }, gap: "15%" }}
+              sx={{
+                "&:hover": { backgroundColor: "#138808", color: "white" },
+                gap: "15%",
+              }}
             >
-              
-                <ExitToAppIcon />
+              <ExitToAppIcon />
 
               <ListItemText primary="Back to Home" />
             </ListItemButton>
           </Box>
         </Drawer>
+
         <Main open={open}>
           <DrawerHeader />
           {selectedView === null && (
             <Box
+            sx={{
+              display: "flex",
+              flexWrap: "wrap",
+              justifyContent: "space-around",
+              gap: 12,
+              padding: 5,
+            }}
+          >
+            {/* Create Region Card */}
+            <Card
               sx={{
-                display: "flex",
-                flexWrap: "wrap",
-                justifyContent: "space-around",
-                gap: 4,
-                padding: 4,
+                backgroundColor: "#138808",
+                width: { xs: "100%", sm: "50%", md: "30%", lg: "20%" },
+                borderRadius: 5,
+                padding: 2,
               }}
+              onClick={() => handleCardClick("createRegion")}
             >
-              <Card
+              <CardContent
                 sx={{
-                  backgroundColor: "#138808",
-                  width: "25%",
-                  borderRadius: 5,
-                  marginBottom: 4,
-                  marginLeft: 10,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  height: "100%",
                 }}
-                onClick={() => handleCardClick("enrollVoter")}
               >
-                <CardMedia
-                  component="img"
+                <Box
                   sx={{
-                    height: 180,
-                    width: "70%",
-                    objectFit: "cover",
-                    margin: "0 auto",
-                    marginTop: 2,
+                    flexGrow: 2,
+                    display: "flex",
+                    justifyContent: "center",
                   }}
-                  image={p2}
-                  alt="Enroll Voter"
-                />
-                <CardContent>
-                  <Typography
-                    gutterBottom
-                    variant="h5"
-                    component="div"
-                    color="white"
-                    textAlign="center"
-                  >
-                    Enroll Voter
-                  </Typography>
-                </CardContent>
-              </Card>
-              <Card
+                >
+                  <CardMedia
+                    component="img"
+                    sx={{
+                      height: { xs: 50, sm: 75, md: 100 },
+                      width: { xs: "33%", sm: "44%", md: "100%" },
+                      objectFit: "cover",
+                      margin: "0 auto",
+                    }}
+                    image={p6} // Same image used for all cards
+                    alt="Icon"
+                  />
+                </Box>
+                <Typography
+                  gutterBottom
+                  variant="h6"
+                  component="div"
+                  color="white"
+                  textAlign="center"
+                  sx={{ marginTop: 2 }}
+                >
+                  Create Region
+                </Typography>
+              </CardContent>
+            </Card>
+          
+            {/* Enroll Voter Card */}
+            <Card
+              sx={{
+                backgroundColor: "#138808",
+                width: { xs: "100%", sm: "50%", md: "30%", lg: "20%" },
+                borderRadius: 5,
+                padding: 2,
+              }}
+              onClick={() => handleCardClick("enrollVoter")}
+            >
+              <CardContent
                 sx={{
-                  backgroundColor: "#138808",
-                  width: "25%",
-                  borderRadius: 5,
-                  marginBottom: 4,
-                  marginLeft: 9,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  height: "100%",
                 }}
-                onClick={() => handleCardClick("enrollParty")}
               >
-                <CardMedia
-                  component="img"
+                <Box
                   sx={{
-                    height: 180,
-                    width: "80%",
-                    objectFit: "cover",
-                    margin: "0 auto",
-                    marginTop: 2,
+                    flexGrow: 2,
+                    display: "flex",
+                    justifyContent: "center",
                   }}
-                  image={p3}
-                  alt="Enroll Party"
-                />
-                <CardContent>
-                  <Typography
-                    gutterBottom
-                    variant="h5"
-                    component="div"
-                    color="white"
-                    textAlign="center"
-                  >
-                    Enroll Party
-                  </Typography>
-                </CardContent>
-              </Card>
-              <Card
+                >
+                  <CardMedia
+                    component="img"
+                    sx={{
+                      height: { xs: 50, sm: 75, md: 100 },
+                      width: { xs: "33%", sm: "44%", md: "100%" },
+                      objectFit: "cover",
+                      margin: "0 auto",
+                    }}
+                    image={p2} // Same image used for all cards
+                    alt="Icon"
+                  />
+                </Box>
+                <Typography
+                  gutterBottom
+                  variant="h6"
+                  component="div"
+                  color="white"
+                  textAlign="center"
+                  sx={{ marginTop: 2 }}
+                >
+                  Enroll Voter
+                </Typography>
+              </CardContent>
+            </Card>
+          
+            {/* Enroll Party Card */}
+            <Card
+              sx={{
+                backgroundColor: "#138808",
+                width: { xs: "100%", sm: "50%", md: "30%", lg: "20%" },
+                borderRadius: 5,
+                padding: 2,
+              }}
+              onClick={() => handleCardClick("enrollParty")}
+            >
+              <CardContent
                 sx={{
-                  backgroundColor: "#138808",
-                  width: "25%",
-                  borderRadius: 5,
-                  marginBottom: 4,
-                  marginLeft: 9,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  height: "100%",
                 }}
-                onClick={() => handleCardClick("viewVoters")}
               >
-                <CardMedia
-                  component="img"
+                <Box
                   sx={{
-                    height: 180,
-                    width: "70%",
-                    objectFit: "cover",
-                    margin: "0 auto",
-                    marginTop: 2,
+                    flexGrow: 2,
+                    display: "flex",
+                    justifyContent: "center",
                   }}
-                  image={p1}
-                  alt="View Voters"
-                />
-                <CardContent>
-                  <Typography
-                    gutterBottom
-                    variant="h5"
-                    component="div"
-                    color="white"
-                    textAlign="center"
-                  >
-                    View Voters
-                  </Typography>
-                </CardContent>
-              </Card>
-
-              <Card
+                >
+                  <CardMedia
+                    component="img"
+                    sx={{
+                      height: { xs: 50, sm: 75, md: 100 },
+                      width: { xs: "33%", sm: "44%", md: "100%" },
+                      objectFit: "cover",
+                      margin: "0 auto",
+                    }}
+                    image={p3} // Same image used for all cards
+                    alt="Icon"
+                  />
+                </Box>
+                <Typography
+                  gutterBottom
+                  variant="h6"
+                  component="div"
+                  color="white"
+                  textAlign="center"
+                  sx={{ marginTop: 2 }}
+                >
+                  Enroll Party
+                </Typography>
+              </CardContent>
+            </Card>
+          
+            {/* View Regions Card */}
+            <Card
+              sx={{
+                backgroundColor: "#138808",
+                width: { xs: "100%", sm: "50%", md: "30%", lg: "20%" },
+                borderRadius: 5,
+                padding: 2,
+              }}
+              onClick={() => handleCardClick("viewRegions")}
+            >
+              <CardContent
                 sx={{
-                  backgroundColor: "#138808",
-                  width: "25%",
-                  borderRadius: 5,
-                  marginBottom: 4,
-                  marginLeft: 10,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  height: "100%",
                 }}
-                onClick={() => handleCardClick("viewParties")}
               >
-                <CardMedia
-                  component="img"
+                <Box
                   sx={{
-                    height: 180,
-                    width: "55%",
-                    objectFit: "cover",
-                    margin: "0 auto",
-                    marginTop: 2,
+                    flexGrow: 2,
+                    display: "flex",
+                    justifyContent: "center",
                   }}
-                  image={p4}
-                  alt="View Parties"
-                />
-                <CardContent>
-                  <Typography
-                    gutterBottom
-                    variant="h5"
-                    component="div"
-                    color="white"
-                    textAlign="center"
-                  >
-                    View Parties
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Box>
+                >
+                  <CardMedia
+                    component="img"
+                    sx={{
+                      height: { xs: 50, sm: 75, md: 100 },
+                      width: { xs: "33%", sm: "44%", md: "100%" },
+                      objectFit: "cover",
+                      margin: "0 auto",
+                    }}
+                    image={p5} // Same image used for all cards
+                    alt="Icon"
+                  />
+                </Box>
+                <Typography
+                  gutterBottom
+                  variant="h6"
+                  component="div"
+                  color="white"
+                  textAlign="center"
+                  sx={{ marginTop: 2 }}
+                >
+                  View Regions
+                </Typography>
+              </CardContent>
+            </Card>
+          
+            {/* View Voters Card */}
+            <Card
+              sx={{
+                backgroundColor: "#138808",
+                width: { xs: "100%", sm: "50%", md: "30%", lg: "20%" },
+                borderRadius: 5,
+                padding: 2,
+              }}
+              onClick={() => handleCardClick("viewVoters")}
+            >
+              <CardContent
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  height: "100%",
+                }}
+              >
+                <Box
+                  sx={{
+                    flexGrow: 2,
+                    display: "flex",
+                    justifyContent: "center",
+                  }}
+                >
+                  <CardMedia
+                    component="img"
+                    sx={{
+                      height: { xs: 50, sm: 75, md: 100 },
+                      width: { xs: "33%", sm: "44%", md: "100%" },
+                      objectFit: "cover",
+                      margin: "0 auto",
+                    }}
+                    image={p1} // Same image used for all cards
+                    alt="Icon"
+                  />
+                </Box>
+                <Typography
+                  gutterBottom
+                  variant="h6"
+                  component="div"
+                  color="white"
+                  textAlign="center"
+                  sx={{ marginTop: 2 }}
+                >
+                  View Voters
+                </Typography>
+              </CardContent>
+            </Card>
+          
+            {/* View Parties Card */}
+            <Card
+              sx={{
+                backgroundColor: "#138808",
+                width: { xs: "100%", sm: "50%", md: "30%", lg: "20%" },
+                borderRadius: 5,
+                padding: 2,
+              }}
+              onClick={() => handleCardClick("viewParties")}
+            >
+              <CardContent
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  height: "100%",
+                }}
+              >
+                <Box
+                  sx={{
+                    flexGrow: 2,
+                    display: "flex",
+                    justifyContent: "center",
+                  }}
+                >
+                  <CardMedia
+                    component="img"
+                    sx={{
+                      height: { xs: 50, sm: 75, md: 100 },
+                      width: { xs: "33%", sm: "44%", md: "100%" },
+                      objectFit: "cover",
+                      margin: "0 auto",
+                    }}
+                    image={p4} // Same image used for all cards
+                    alt="Icon"
+                  />
+                </Box>
+                <Typography
+                  gutterBottom
+                  variant="h6"
+                  component="div"
+                  color="white"
+                  textAlign="center"
+                  sx={{ marginTop: 2 }}
+                >
+                  View Parties
+                </Typography>
+              </CardContent>
+            </Card>
+          </Box>
+          
           )}
           {selectedView === "createRegion" && <RegionForm />}
           {selectedView === "enrollVoter" && <EnrollVoterForm />}

@@ -1,4 +1,8 @@
 const Region = require('../model/RegionModel'); 
+const FaceModel = require("../model/faceModel");
+const PartyModel = require("../model/partyModel");
+const fs = require('fs');
+const path = require('path');
 
 exports.createRegion = async (req, res) => {
   const { name, description } = req.body;
@@ -103,5 +107,94 @@ exports.addPartyToRegion = async (regionId, partyId) => {
     await region.save();
   } catch (error) {
     console.error('Error adding party to region:', error);
+  }
+};
+
+// Controller to get voters of a region
+exports.getVotersOfRegion = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const region = await Region.findById(id).populate('voters');
+    if (region) {
+      res.json(region.voters);
+    } else {
+      res.status(404).json({ message: 'Region not found' });
+    }
+  } catch (error) {
+    console.error('Error fetching voters:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+// Controller to get parties of a region
+exports.getPartiesOfRegion = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const region = await Region.findById(id).populate('parties');
+    if (region) {
+      res.json(region.parties);
+    } else {
+      res.status(404).json({ message: 'Region not found' });
+    }
+  } catch (error) {
+    console.error('Error fetching parties:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+// Controller to download voters list as a file
+exports.downloadVotersList = async (req, res) => {
+  const { id } = req.params;
+ 
+
+  try {
+    const region = await Region.findById(id).populate('voters');
+    if (region) {
+      const filePath = path.join(__dirname, 'voters-list.txt');
+      const fileContent = region.voters.map(voter => `Voter ID: ${voter._id}, Name: ${voter.label}, Mobile Number: ${voter.mobile_number}`).join('\n');
+      fs.writeFileSync(filePath, fileContent);
+
+      res.download(filePath, 'voters-list.txt', (err) => {
+        if (err) {
+          console.error('Error downloading file:', err);
+          res.status(500).json({ message: 'Error downloading file' });
+        }
+        fs.unlinkSync(filePath); // Delete the file after download
+      });
+    } else {
+      res.status(404).json({ message: 'Region not found' });
+    }
+  } catch (error) {
+    console.error('Error downloading voters list:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+// Controller to download parties list as a file
+exports.downloadPartiesList = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const region = await Region.findById(id).populate('parties');
+    if (region) {
+      const filePath = path.join(__dirname, 'parties-list.txt');
+      const fileContent = region.parties.map(party => `Party ID: ${party._id}, Party Name: ${party.partyName}, Party Leader: ${party.partyLeader}, Party Symbol: ${party.partySymbol}`).join('\n');
+      fs.writeFileSync(filePath, fileContent);
+
+      res.download(filePath, 'parties-list.txt', (err) => {
+        if (err) {
+          console.error('Error downloading file:', err);
+          res.status(500).json({ message: 'Error downloading file' });
+        }
+        fs.unlinkSync(filePath); // Delete the file after download
+      });
+    } else {
+      res.status(404).json({ message: 'Region not found' });
+    }
+  } catch (error) {
+    console.error('Error downloading parties list:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };

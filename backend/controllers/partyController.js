@@ -81,35 +81,33 @@ const enrollParty = async(req, res)=> {
     res.status(500).json({ message: 'Failed to enroll party. Please try again.' });
   }
 }
-
-const updateParty = async(req, res) => {
+const updateParty = async (req, res) => {
   const { id } = req.params;
-  const { editParty } = req.body;
-  const { partyName, partyLeader, partySymbol } = editParty;
+  const { partyName, partyLeader, partySymbol, regionId } = req.body;
 
   try {
-    // Check if the new party name, leader, or symbol already exists (case-insensitive)
     const existingParty = await PartyModel.findOne({
       $or: [
         { partyName: { $regex: new RegExp(`^${partyName}$`, 'i') } },
         { partyLeader: { $regex: new RegExp(`^${partyLeader}$`, 'i') } },
         { partySymbol: { $regex: new RegExp(`^${partySymbol}$`, 'i') } },
       ],
-      _id: { $ne: id } // Exclude the current party being updated
+      _id: { $ne: id } 
     });
 
     if (existingParty) {
       return res.status(409).json({ message: 'Party already enrolled.' });
     }
 
-    // Find the party by ID and update its details
     const updatedParty = await PartyModel.findByIdAndUpdate(id, {
       partyName,
       partyLeader,
-      partySymbol
+      partySymbol,
+      regionId // Add regionId update
     }, { new: true }); 
+
     if (updatedParty) {
-      res.status(200).json({ message: "Party updated successfully", party: updatedParty });
+      res.status(200).json(updatedParty);
     } else {
       res.status(404).json({ message: "Party not found" });
     }
@@ -117,7 +115,8 @@ const updateParty = async(req, res) => {
     console.error("Error updating party:", error);
     res.status(500).json({ message: "Internal server error" });
   }
-}
+};
+
 
 const deleteParty = async(req, res) => {
   const partyId = req.params.partyId;
@@ -140,10 +139,26 @@ const viewResults = async(req, res) => {
   }
 }
 
+const fetchPartiesByRegion = async (req, res) => {
+  const { region } = req.params;
+
+  console.log(region)
+
+  try {
+    const parties = await PartyModel.find({ regionId: region });
+    console.log("party: ", parties)
+    res.json({ parties });
+  } catch (error) {
+    console.error('Error fetching parties by region:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+}
+
 module.exports = {
   getParties,
   enrollParty,
   updateParty,
   deleteParty,
-  viewResults
+  viewResults,
+  fetchPartiesByRegion
 };

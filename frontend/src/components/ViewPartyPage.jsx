@@ -89,7 +89,7 @@ const ViewPartyPage = () => {
 
   const handleUpdateParty = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/parties/${editParty._id}`, {
+      const response = await fetch(`http://localhost:3000/${editParty._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -101,7 +101,7 @@ const ViewPartyPage = () => {
           regionId: selectedRegion,
         }),
       });
-
+  
       if (response.ok) {
         const updatedParty = await response.json();
         setParties(parties.map(party => party._id === updatedParty._id ? updatedParty : party));
@@ -114,6 +114,7 @@ const ViewPartyPage = () => {
       console.error('Error updating party:', error);
     }
   };
+  
 
   const handleDeleteParty = async (partyId) => {
     try {
@@ -142,7 +143,12 @@ const ViewPartyPage = () => {
 
   return (
     <Box>
-      <Typography variant="h4" gutterBottom style={{ color: '#121481', fontWeight: 'bold' }}>
+      <Typography variant="h4" gutterBottom sx={{
+          fontFamily: "Playfair Display",
+          fontStyle: "italic",
+          fontWeight: 900,
+          color: "#121481",
+        }}>
         Parties Registered
       </Typography>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>

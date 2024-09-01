@@ -1,45 +1,47 @@
-import React, { useState, useEffect } from 'react';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import Select from 'react-select';
+import React, { useState, useEffect } from "react";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+import Select from "react-select";
 
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#ff9933',
+      main: "#ff9933",
     },
     secondary: {
-      main: '#138808',
+      main: "#138808",
     },
   },
 });
 
 const EnrollPartyForm = () => {
-  const [partyName, setPartyName] = useState('');
-  const [partyLeader, setPartyLeader] = useState('');
-  const [partySymbol, setPartySymbol] = useState('');
+  const [partyName, setPartyName] = useState("");
+  const [partyLeader, setPartyLeader] = useState("");
+  const [partySymbol, setPartySymbol] = useState("");
   const [selectedRegion, setSelectedRegion] = useState(null);
   const [regions, setRegions] = useState([]);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     const fetchRegions = async () => {
       try {
-        const response = await fetch('http://localhost:3000/regions');
+        const response = await fetch("http://localhost:3000/regions");
         if (response.ok) {
           const data = await response.json();
-          setRegions(data.regions.map(region => ({
-            value: region._id,
-            label: region.name
-          })));
+          setRegions(
+            data.regions.map((region) => ({
+              value: region._id,
+              label: region.name,
+            }))
+          );
         } else {
-          console.error('Failed to fetch regions:', response.statusText);
+          console.error("Failed to fetch regions:", response.statusText);
         }
       } catch (error) {
-        console.error('Error fetching regions:', error);
+        console.error("Error fetching regions:", error);
       }
     };
 
@@ -48,10 +50,10 @@ const EnrollPartyForm = () => {
 
   const handleEnrollParty = async () => {
     try {
-      const response = await fetch('http://localhost:3000/enroll-party', {
-        method: 'POST',
+      const response = await fetch("http://localhost:3000/enroll-party", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           partyName: partyName.toLowerCase(),
@@ -64,30 +66,39 @@ const EnrollPartyForm = () => {
       if (response.ok) {
         const data = await response.json();
         console.log(data.message);
-        setErrorMessage('');
-        setPartyName('');
-        setPartyLeader('');
-        setPartySymbol('');
+        setErrorMessage("");
+        setPartyName("");
+        setPartyLeader("");
+        setPartySymbol("");
         setSelectedRegion(null);
       } else {
         const data = await response.json();
         if (response.status === 409) {
           setErrorMessage(data.message);
         } else {
-          console.error('Failed to enroll party:', response.statusText);
-          setErrorMessage('Failed to enroll party. Please try again.');
+          console.error("Failed to enroll party:", response.statusText);
+          setErrorMessage("Failed to enroll party. Please try again.");
         }
       }
     } catch (error) {
-      console.error('Error enrolling party:', error);
-      setErrorMessage('Error enrolling party. Please try again.');
+      console.error("Error enrolling party:", error);
+      setErrorMessage("Error enrolling party. Please try again.");
     }
   };
 
   return (
     <ThemeProvider theme={theme}>
       <Box>
-        <Typography variant="h4" gutterBottom>
+        <Typography
+          variant="h4"
+          gutterBottom
+          sx={{
+            fontFamily: "Playfair Display",
+            fontStyle: "italic",
+            fontWeight: 900,
+            color: "#121481",
+          }}
+        >
           Enroll Party
         </Typography>
         <TextField
@@ -131,7 +142,11 @@ const EnrollPartyForm = () => {
           </Typography>
         )}
         <Box mt={2}>
-          <Button variant="contained" color="primary" onClick={handleEnrollParty}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleEnrollParty}
+          >
             Enroll Party
           </Button>
         </Box>

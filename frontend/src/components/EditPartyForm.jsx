@@ -19,6 +19,7 @@ const EditPartyForm = ({ party, onUpdate }) => {
           partySymbol,
         }),
       });
+      console.log("response ==>",response)
 
       if (response.ok) {
         const updatedParty = await response.json();

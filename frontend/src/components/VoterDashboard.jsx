@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Typography, Table, TableHead, TableBody, TableRow, TableCell, Button, Box } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import img from '../assets/government.png';
@@ -9,16 +9,22 @@ const ViewVoterPage = () => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [votedParty, setVotedParty] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
+  const { region } = location.state || {};
 
   useEffect(() => {
-    fetchParties();
-  }, []);
+    console.log("Dash==> ",region)
+    if (region) {
+      fetchParties(region);
+    }
+  }, [region]);
 
-  const fetchParties = async () => {
+  const fetchParties = async (region) => {
     try {
-      const response = await fetch('http://localhost:3000/parties');
+      const response = await fetch(`http://localhost:3000/parties/${region}`);
       if (response.ok) {
         const data = await response.json();
+        console.log(data)
         setParties(data.parties);
       } else {
         console.error('Failed to fetch parties:', response.statusText);
@@ -27,6 +33,8 @@ const ViewVoterPage = () => {
       console.error('Error fetching parties:', error);
     }
   };
+
+  
 
   const handleVote = async (partyId, partyName) => {
     try {

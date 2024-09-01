@@ -8,26 +8,24 @@ from flask import Flask, request, jsonify
 from flask_pymongo import PyMongo
 from flask_cors import CORS
 
-# Initialize Flask app
+
 app = Flask(__name__)
 CORS(app)
 
-# MongoDB configuration
 app.config['MONGO_URI'] = 'mongodb+srv://Bharath_Narayanan:bharath22@cluster0.16bef1g.mongodb.net/voting_system'
 mongo = PyMongo(app)
 
-# Load Haar Cascade for face detection
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
-# Initialize LBPH face recognizer
+
 recognizer = cv2.face.LBPHFaceRecognizer_create()
 
-# Directory to save face images
+
 dataset_dir = 'face_dataset'
 if not os.path.exists(dataset_dir):
     os.makedirs(dataset_dir)
 
-# OTP storage
+
 otp_storage = {}
 
 def generate_otp(length=6):
@@ -154,8 +152,14 @@ def recognize_face():
     data = request.get_json()
     
     image_data = data.get('image', '')
+    region_id_str = data.get('regionId', '')
     # mobile_number = data.get('mobile_number')
     # print(mobile_number)
+
+    try:
+        regionId = ObjectId(region_id_str)
+    except Exception as e:
+        return jsonify({"error": "Invalid regionId format"}), 400
     
     nparr = np.frombuffer(base64.b64decode(image_data), np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
@@ -202,11 +206,13 @@ def recognize_face():
         if user:
             if user.get('hasVoted', False):
                 return jsonify({"name": recognized_name, "message": "Already voted", "confidence": confidence}), 200
+            elif user.get('regionId') != regionId:
+                return jsonify({"name": recognized_name, "message": "Region mismatch", "confidence": confidence}), 200
             else:
                 mobile_number = user.get('mobile_number')
-                otp = generate_otp()
-                otp_storage[mobile_number] = otp
-                send_otp(mobile_number, otp)
+                # otp = generate_otp()
+                # otp_storage[mobile_number] = otp
+                # send_otp(mobile_number, otp)
 
                 mongo.db.faces.update_one(
                     {"label": recognized_name},

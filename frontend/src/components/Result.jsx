@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Typography, Table, TableHead, TableBody, TableRow, TableCell, Box, Button, Skeleton, Modal } from '@mui/material';
-import img from '../assets/government.png';
+import { Typography, Table, TableHead, TableBody, TableRow, TableCell, Box, Button, Skeleton, Modal, Select, MenuItem } from '@mui/material';
 import { PieChart, Pie, Cell, Tooltip } from 'recharts'; // Importing Recharts components
+import axios from 'axios';
+import img from '../assets/government.png';
 
 const ViewLiveResultPage = () => {
   const [parties, setParties] = useState([]);
@@ -9,11 +10,29 @@ const ViewLiveResultPage = () => {
   const [totalVoters, setTotalVoters] = useState(0);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
+  const [regions, setRegions] = useState([]);
+  const [filterRegion, setFilterRegion] = useState('');
+
+  const [filteredParties, setFilteredParties] = useState([]);
 
   useEffect(() => {
     fetchParties();
     fetchVoters();
+    fetchRegions();
   }, []);
+
+  useEffect(() => {
+    filterParties();
+  }, [filterRegion, parties]);
+
+  const fetchRegions = async () => {
+    try {
+      const response = await axios.get('http://127.0.0.1:3000/regions');
+      setRegions(response.data.regions);
+    } catch (error) {
+      console.error('Error fetching regions:', error);
+    }
+  };
 
   const fetchParties = async () => {
     try {
@@ -45,6 +64,20 @@ const ViewLiveResultPage = () => {
     } catch (error) {
       console.error('Error fetching voters:', error);
     }
+  };
+
+  const filterParties = () => {
+    let filtered = parties;
+
+    if (filterRegion) {
+      filtered = filtered.filter(party => party.regionId === filterRegion);
+    }
+
+    // Update the total votes based on filtered parties
+    const totalVotesCount = filtered.reduce((acc, party) => acc + party.VoteCount, 0);
+    setTotalVotes(totalVotesCount);
+
+    setFilteredParties(filtered);
   };
 
   const votePercentage = totalVoters > 0 ? (totalVotes / totalVoters) * 100 : 0;
@@ -82,11 +115,31 @@ const ViewLiveResultPage = () => {
         <Typography variant="h4" gutterBottom style={{ color: '#000080', fontWeight: 'bold', textAlign: 'center' }}>
           Overall Vote Count: {totalVotes}
         </Typography>
+        
         <Button variant="contained" onClick={handleOpen} sx={{ float: 'right', marginBottom: 2, backgroundColor: '#138808', color: '#fff', '&:hover': {
-                        backgroundColor: '#ff9933',
-                      }, }}>
+          backgroundColor: '#ff9933',
+        }, }}>
           View Vote Percentage
         </Button>
+        <Box display="flex"  mb={2}>
+          <Select
+            value={filterRegion}
+            onChange={(e) => setFilterRegion(e.target.value)}
+            displayEmpty
+            variant="outlined"
+            margin="normal"
+            sx={{ minWidth: 300 }}
+          >
+            <MenuItem value="">
+              <em>All Regions</em>
+            </MenuItem>
+            {regions.map((region) => (
+              <MenuItem key={region._id} value={region._id}>{region.name}</MenuItem>
+            ))}
+          </Select>
+        </Box>
+
+
         <Table sx={{ width: '100%' }}>
           <TableHead>
             <TableRow style={{ backgroundColor: '#ff9933' }}>
@@ -115,7 +168,7 @@ const ViewLiveResultPage = () => {
                 </TableRow>
               </>
             ) : (
-              parties.map((party) => (
+              filteredParties.map((party) => (
                 <TableRow key={party._id}>
                   <TableCell style={{ textAlign: 'center' }}>{party.partyName}</TableCell>
                   <TableCell style={{ textAlign: 'center' }}>{party.partySymbol}</TableCell>
@@ -125,6 +178,7 @@ const ViewLiveResultPage = () => {
             )}
           </TableBody>
         </Table>
+
       </Box>
 
       {/* Modal for displaying vote percentage */}
