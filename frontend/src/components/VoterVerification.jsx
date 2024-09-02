@@ -51,11 +51,11 @@ const VoterVerification = () => {
           } else if (response.data.message === 'Region mismatch') {
             setResult('Voter does not belong to the selected region.');
           } else {
-            // setMobileNumber(response.data.mobileNumber);
-            // setShowOtpPopup(true);
-            // setResult('Face recognized. OTP sent to your mobile number.');
+            setMobileNumber(response.data.mobileNumber);
+            setShowOtpPopup(true);
+            setResult('Face recognized. OTP sent to your mobile number.');
             console.log(selectedRegion);
-            navigate("/voter", { state: { region: selectedRegion } });
+  
           }
         }
       } catch (error) {
