@@ -31,6 +31,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const fileUpload = require('express-fileupload');
+const path = require('path');
 
 // Import routes
 const authRoutes = require('./routes/fingerPrintRoute');
@@ -43,6 +44,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(fileUpload());
+
+// app.use('/face_dataset', express.static(path.join(__dirname, 'face_dataset')));
 
 // MongoDB Connection
 mongoose.connect('mongodb+srv://Bharath_Narayanan:bharath22@cluster0.16bef1g.mongodb.net/voting_system', {

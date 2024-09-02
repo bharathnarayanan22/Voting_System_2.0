@@ -25,6 +25,38 @@ const faceSchema = new mongoose.Schema({
     type: [String],
     default: [],
   },
+  gender: {
+    type: String,
+    enum: ["Male", "Female", "Other"],
+    required: true,
+  },
+  maritalStatus: {
+    type: String,
+    enum: ["Yes", "No"],
+    required: true,
+  },
+  spouseName: {
+    type: String,
+    required: function() {
+      return this.maritalStatus === "Yes";
+    },
+  },
+  fatherName: {
+    type: String,
+    required: function() {
+      return this.maritalStatus === "No";
+    },
+  },
+  motherName: {
+    type: String,
+    required: function() {
+      return this.maritalStatus === "No";
+    },
+  },
+  dateOfBirth: {
+    type: Date,
+    required: true,
+  },
   
 });
 

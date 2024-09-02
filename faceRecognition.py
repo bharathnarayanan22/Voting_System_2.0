@@ -67,7 +67,26 @@ def capture_face():
     image_data_list = data['image']
     mobile_number = data['mobile_number']
     region_id_str = data['regionId']
-    #fingerprintData = data['fingerprintData']
+    gender = data.get('gender')
+    marital_status = data.get('maritalStatus')
+    dateOfBirth = data.get('dateOfBirth')
+    print(marital_status)
+    print(gender)
+
+    # Handle spouse name or parents' names based on marital status
+    if marital_status == "married":
+        spouse_name = data.get('spouseName')
+        if gender == "male" and not spouse_name:
+            return jsonify({"error": "Wife's name is required for married males"}), 400
+        if gender == "female" and not spouse_name:
+            return jsonify({"error": "Husband's name is required for married females"}), 400
+    elif marital_status == "unmarried":
+        father_name = data.get('fatherName')
+        print(father_name)
+        mother_name = data.get('motherName')
+        print(mother_name)
+        if not father_name or not mother_name:
+            return jsonify({"error": "Both father's and mother's names are required if unmarried"}), 400
 
     try:
         regionId = ObjectId(region_id_str)
@@ -96,13 +115,18 @@ def capture_face():
             image_paths.append(file_name_path)
 
             result = mongo.db.faces.update_one(
-                {'label': name,},
+                {'label': name},
                 {
                     '$setOnInsert': {
-                        'hasVoted': False, 
-                        'mobile_number': mobile_number, 
-                        'regionId': regionId, 
-                        # 'fingerprintData': fingerprintData
+                        'hasVoted': False,
+                        'mobile_number': mobile_number,
+                        'regionId': regionId,
+                        'gender': gender,
+                        'maritalStatus': marital_status,
+                        'spouseName': spouse_name if marital_status == "married" else None,
+                        'fatherName': father_name if marital_status == "unmarried" else None,
+                        'motherName': mother_name if marital_status == "unmarried" else None,
+                        'dateOfBirth':dateOfBirth
                     },
                     '$push': {'imagePaths': file_name_path}
                 },
